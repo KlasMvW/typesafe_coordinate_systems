@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace Cs
+namespace Ts
 {
 
 namespace System
@@ -103,4 +103,4 @@ M<From, To> relate_system()
 	auto v2 = down<To>(v1);
 	return v2;
 }
-} // namespace Cs
+} // namespace Ts

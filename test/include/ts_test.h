@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cs/typesafe_coordinate_systems.h"
+#include "ts/typesafe_coordinate_systems.h"
 #include "connector.h"
 
 #include <vector>
@@ -17,7 +17,7 @@
 //
 //
 
-namespace Cs {
+namespace Ts {
 namespace System
 {
   struct A : System<A, Root>
