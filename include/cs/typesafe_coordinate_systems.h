@@ -18,31 +18,31 @@ namespace System
 	};
 }
 
-namespace FindFunction
+namespace Find_function
 {
     template<typename Arg1, typename Arg2>
-	constexpr auto toChild(int) -> decltype(Transform::toChild(std::declval<Arg1>(), std::declval<Arg2>()), std::true_type{})
+	constexpr auto to_child(int) -> decltype(Transform::to_child(std::declval<Arg1>(), std::declval<Arg2>()), std::true_type{})
     {
         return {};
     }
 	
     template<typename Arg1, typename Arg2>
-    constexpr auto toChild(...) -> std::false_type
+    constexpr auto to_child(...) -> std::false_type
     {
         return {};
     }
 }
 
 template<typename S1, typename S2>
-constexpr auto findCommonAncestorSystem()
+constexpr auto find_common_ancestor()
 {
     if constexpr (S1::level > S2::level)
     {
-        return findCommonAncestorSystem<typename S1::parent, S2>();
+        return find_common_ancestor<typename S1::parent, S2>();
     }   
     else if constexpr (S1::level < S2::level)
     {
-        return findCommonAncestorSystem<S1, typename S2::parent>();
+        return find_common_ancestor<S1, typename S2::parent>();
     }
     else
     {    
@@ -52,7 +52,7 @@ constexpr auto findCommonAncestorSystem()
         }
         else
         {
-            return findCommonAncestorSystem<typename S1::parent, typename S2::parent>(); 
+            return find_common_ancestor<typename S1::parent, typename S2::parent>(); 
         }
     }   
 }
@@ -66,7 +66,7 @@ M<From, To> up(const M<From, Intermediate> &rhs)
 	}
 	else
 	{
-		const auto v1 = Transform::toParent(rhs);
+		const auto v1 = Transform::to_parent(rhs);
 		const auto v2 = up<To>(v1);
 		return v2;
 	}
@@ -79,9 +79,9 @@ M<From, To> down(const M<From, Intermediate> &rhs)
 	{
 		return rhs;
 	}
-	else if constexpr (FindFunction::toChild<const M<From, Intermediate> &, M<From, To> &>(0)){
+	else if constexpr (Find_function::to_child<const M<From, Intermediate> &, M<From, To> &>(0)){
 		M<From, To> v1;
-		Transform::toChild(rhs, v1);
+		Transform::to_child(rhs, v1);
 		return v1;
 	}
 	else
@@ -93,10 +93,10 @@ M<From, To> down(const M<From, Intermediate> &rhs)
 }
 
 template<typename From, typename To,  template<typename, typename> typename M>
-M<From, To> relateSystems()
+M<From, To> relate_system()
 {
 	M<From, From> sr;
-	auto v1 = up<decltype(findCommonAncestorSystem<To, From>())>(sr);
+	auto v1 = up<decltype(find_common_ancestor<To, From>())>(sr);
 	auto v2 = down<To>(v1);
 	return v2;
 }

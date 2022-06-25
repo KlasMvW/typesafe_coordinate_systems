@@ -46,13 +46,11 @@ namespace System
 
 }
 
-
-
 namespace Transform
 {
  // A <-> B1
   template<typename From>
-  Connector<From, System::A> toParent(const Connector<From, System::B1>& from)
+  Connector<From, System::A> to_parent(const Connector<From, System::B1>& from)
   {
     Connector<System::B1, System::A> B1_to_A;
     B1_to_A.log_message("B1 to A");
@@ -62,7 +60,7 @@ namespace Transform
   }
 
   template<typename From>
-  void toChild(const Connector<From, System::A>& from, Connector<From, System::B1>& to)
+  void to_child(const Connector<From, System::A>& from, Connector<From, System::B1>& to)
   {
     Connector<System::A, System::B1> A_to_B1;
     A_to_B1.log_message("A to B1");
@@ -72,7 +70,7 @@ namespace Transform
 
  // A <-> B2
   template<typename From>
-  Connector<From, System::A> toParent(const Connector<From, System::B2>& from)
+  Connector<From, System::A> to_parent(const Connector<From, System::B2>& from)
   {
     Connector<System::B2, System::A> B2_to_A;
     B2_to_A.log_message("B2 to A");
@@ -82,7 +80,7 @@ namespace Transform
   }
 
   template<typename From>
-  void toChild(const Connector<From, System::A>& from, Connector<From, System::B2>& to)
+  void to_child(const Connector<From, System::A>& from, Connector<From, System::B2>& to)
   {
     Connector<System::A, System::B2> A_to_B2;
     A_to_B2.log_message("A to B2");
@@ -92,7 +90,7 @@ namespace Transform
 
   // B2 <-> C3
   template<typename From>
-  Connector<From, System::B2> toParent(const Connector<From, System::C3>& from)
+  Connector<From, System::B2> to_parent(const Connector<From, System::C3>& from)
   {
     Connector<System::C3, System::B2> C3_to_B2;
     C3_to_B2.log_message("C3 to B2");
@@ -102,7 +100,7 @@ namespace Transform
   }
 
   template<typename From>
-  void toChild(const Connector<From, System::B2>& from, Connector<From, System::C3>& to)
+  void to_child(const Connector<From, System::B2>& from, Connector<From, System::C3>& to)
   {
     Connector<System::B2, System::C3> B2_to_C3;
     B2_to_C3.log_message("B2 to C3");
@@ -112,7 +110,7 @@ namespace Transform
 
   // B1 <-> C1
   template<typename From>
-  Connector<From, System::B1> toParent(const Connector<From, System::C1>& from)
+  Connector<From, System::B1> to_parent(const Connector<From, System::C1>& from)
   {
     Connector<System::C1, System::B1> C1_to_B1;
     C1_to_B1.log_message("C1 to B1");
@@ -122,7 +120,7 @@ namespace Transform
   }
 
   template<typename From>
-  void toChild(const Connector<From, System::B1>& from, Connector<From, System::C1>& to)
+  void to_child(const Connector<From, System::B1>& from, Connector<From, System::C1>& to)
   {
     Connector<System::B1, System::C1> B1_to_C1;
     B1_to_C1.log_message("B1 to C1");
@@ -132,7 +130,7 @@ namespace Transform
 
   // B1 <-> C2
   template<typename From>
-  Connector<From, System::B1> toParent(const Connector<From, System::C2>& from)
+  Connector<From, System::B1> to_parent(const Connector<From, System::C2>& from)
   {
     Connector<System::C2, System::B1> C2_to_B1;
     C2_to_B1.log_message("C2 to B1");
@@ -142,7 +140,7 @@ namespace Transform
   }
 
   template<typename From>
-  void toChild(const Connector<From, System::B1>& from, Connector<From, System::C2>& to)
+  void to_child(const Connector<From, System::B1>& from, Connector<From, System::C2>& to)
   {
     Connector<System::B1, System::C2> B1_to_C2;
     B1_to_C2.log_message("B1 to C2");
