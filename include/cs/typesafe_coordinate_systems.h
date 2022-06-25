@@ -2,6 +2,9 @@
 
 #include <type_traits>
 
+namespace Cs
+{
+
 namespace System
 {
 	template<typename ThisSystem, typename ParentSystem>
@@ -16,7 +19,7 @@ namespace System
 	{
 		static constexpr int level = 0;
 	};
-}
+} // namespace System
 
 namespace Find_function
 {
@@ -31,7 +34,7 @@ namespace Find_function
     {
         return {};
     }
-}
+} // namespace Find_function
 
 template<typename S1, typename S2>
 constexpr auto find_common_ancestor()
@@ -100,3 +103,4 @@ M<From, To> relate_system()
 	auto v2 = down<To>(v1);
 	return v2;
 }
+} // namespace Cs

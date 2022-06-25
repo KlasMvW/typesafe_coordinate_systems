@@ -17,6 +17,7 @@
 //
 //
 
+namespace Cs {
 namespace System
 {
   struct A : System<A, Root>
@@ -42,8 +43,6 @@ namespace System
   struct C3 : System<C3, B2>
   {
   };
-
-
 }
 
 namespace Transform
@@ -147,4 +146,5 @@ namespace Transform
 
     to = B1_to_C2 * from;
   }
-}
+} // namespace Transform
+} // namespace Cs

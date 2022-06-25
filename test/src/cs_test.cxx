@@ -1,13 +1,13 @@
 #include "cs_test.h"
 
 int main() {
-  auto a = relate_system<System::A, System::B1, Connector>();
-  auto b = relate_system<System::B1, System::A, Connector>();
-  auto c = relate_system<System::B1, System::B2, Connector>();
-  auto d = relate_system<System::B2, System::B1, Connector>();
-  auto e = relate_system<System::C3, System::C2, Connector>();
-  auto f = relate_system<System::C3, System::C1, Connector>();
-  auto g = relate_system<System::C3, System::C3, Connector>();
+  auto a = Cs::relate_system<Cs::System::A,  Cs::System::B1, Connector>();
+  auto b = Cs::relate_system<Cs::System::B1, Cs::System::A,  Connector>();
+  auto c = Cs::relate_system<Cs::System::B1, Cs::System::B2, Connector>();
+  auto d = Cs::relate_system<Cs::System::B2, Cs::System::B1, Connector>();
+  auto e = Cs::relate_system<Cs::System::C3, Cs::System::C2, Connector>();
+  auto f = Cs::relate_system<Cs::System::C3, Cs::System::C1, Connector>();
+  auto g = Cs::relate_system<Cs::System::C3, Cs::System::C3, Connector>();
 
   a.print_log();
   b.print_log();
