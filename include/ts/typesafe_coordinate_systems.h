@@ -96,7 +96,7 @@ M<From, To> down(const M<From, Intermediate> &rhs)
 }
 
 template<typename From, typename To,  template<typename, typename> typename M>
-M<From, To> relate_system()
+M<From, To> relate_systems()
 {
 	M<From, From> sr;
 	auto v1 = up<decltype(find_common_ancestor<To, From>())>(sr);
