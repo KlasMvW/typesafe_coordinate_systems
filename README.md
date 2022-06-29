@@ -71,4 +71,4 @@ Matrix<Ts::System::A, Ts::System::B> m = Ts::relate_systems<Ts::System::A, Ts::S
 
 ## TS applied to general tree structures
 
-Note that **TS** can be applied to any tree-like hierarchy where there is some kind of property that connects two nodes (systems) going in a specific direction. The `Matrix` can be any object as long as the signatures are correct and the `to_parent` and `to_child` functions has the correct form.  
+Note that **TS** can be applied to any tree-like hierarchy where there is some kind of property that connects two nodes (systems) going in a specific direction. The `Matrix` can be any object as long as the signatures are correct and the `to_parent` and `to_child` functions have the correct form.  
