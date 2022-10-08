@@ -157,7 +157,7 @@ void assert(const T& l, const T& r, int line) {
       if constexpr (std::is_same_v<Op, near<T>>) {
         log.push_back({"FAIL: assert_near", "Line " + std::to_string(line), to_str(l) + " not near " + to_str(r)});
       } else {
-         log.push_back({"FAIL: assert", "Line " + std::to_string(line)});
+        log.push_back({"FAIL: assert", "Line " + std::to_string(line)});
       }
   }
 }
@@ -183,11 +183,6 @@ constexpr void assert_type_among(int line, std::string types= "") {
 int main() {
 
 Test<"testFindFunction">([]<typename T>(T& t) {
-
-//void toChild(const A&, const B) {}
-//void toChild(const A&, B&, const C) {}
-//void toChild(A&, B, C&, const D) {}
-//void toChild(A&, B, const C&, const D, E) {}
 
   if constexpr (!find_function::toChild<A, B>) {
     t.assert_true(false, __LINE__);
