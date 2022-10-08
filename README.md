@@ -1,3 +1,5 @@
+[![CI - MSVC && GCC](https://github.com/KlasMvW/type_safe_coordinate_systems/actions/workflows/cmake.yml/badge.svg)](https://github.com/KlasMvW/type_safe_coordinate_systems/actions/workflows/cmake.yml)
+
 # Typesafe coordinate systems
 
 ## Brief description
