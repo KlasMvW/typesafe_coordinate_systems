@@ -154,7 +154,7 @@ template <typename T,
           template <typename, typename, typename>
           typename M,
           typename... GeometryState>
-M<T, From, To> up(const M<T, From, Intermediate>& rhs, const GeometryState&... geometryState) {
+M<T, From, To> up(const M<T, From, Intermediate>& rhs, [[maybe_unused]]const GeometryState&... geometryState) {
   if constexpr (std::is_same<To, Intermediate>::value) {
     return rhs;
   } else {
@@ -173,7 +173,7 @@ template <typename T,
           template <typename, typename, typename>
           typename M,
           typename... GeometryState>
-M<T, From, To> down(const M<T, From, Intermediate>& rhs, const GeometryState&... geometryState) {
+M<T, From, To> down(const M<T, From, Intermediate>& rhs, [[maybe_unused]]const GeometryState&... geometryState) {
   if constexpr (std::is_same<To, Intermediate>::value) {
     return rhs;
   } else if constexpr (find_function::toChild<const M<T, From, Intermediate>&, M<T, From, To>&, const GeometryState&...>) {
