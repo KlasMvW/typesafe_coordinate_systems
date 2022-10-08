@@ -4,6 +4,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(TS VERSION 0.2.0 LANGUAGES CXX)
 
+enable_testing()
+
 add_library(TS INTERFACE)
 
 target_include_directories(TS INTERFACE include)
