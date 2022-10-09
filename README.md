@@ -16,7 +16,7 @@ Multiple child systems is however allowed.
          C1   C2   C3
 ```
 
-The typesafe transformation matrix for a transformation between two systems is obtained through
+The type-safe transformation matrix for a transformation between two systems is obtained through
 
 ```c++
 Matrix<float, ts::A, ts::C2> m = ts::relateSystems<ts::A, ts::C2, Matrix>(g1, g2....);
@@ -47,7 +47,7 @@ namespace ts
 }
 ```
 
-Here `System` and `Root` are structs in the TS library in the namespace `ts`. The system in the top of the hierarchy (in this case system A) must inherit from `Root` . Note that the construct uses CRTP (Curiously Re-occuring Template Pattern) so that every system is inheriting from `System` templated by the system itself.
+Here `System` and `Root` are structs in the TS library in the namespace `ts`. The system in the top of the hierarchy (in this case system A) must inherit from `Root` . Note that the construct uses CRTP (Curiously Re-occurring Template Pattern) so that every system is inheriting from `System` templated by the system itself.
 
 Further, to use TS the user must define a matrix class templated by the system a matrix transforms from to the system it transforms to e.g.
 
