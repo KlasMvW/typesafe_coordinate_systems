@@ -16,18 +16,26 @@ Multiple child systems is however allowed.
          C1   C2   C3
 ```
 
-Defining the systems, a matrix class templated with the system the matrix connects and free functions that defines the transformations between a parent and a child system, the typesafe transformation matrix for a transformation between two systems is obtained through
+The typesafe transformation matrix for a transformation between two systems is obtained through
 
 ```c++
-Matrix<Ts::System::A, Ts::System::B> m = Ts::relate_systems<Ts::System::A, Ts::System::B, Matrix>();
+Matrix<float, ts::A, ts::C2> m = ts::relate_systems<ts::A, ts::C2, Matrix>(g1, g2....);
 ```
+where 
+
+
+* A and C2 are system structs.
+* Matrix is a user defined class that is templated with the systems that the matrix connects.
+* g1, g2... Are an arbitraty number of objects of user defined types that holds the current geometry state.
+
+Besides the system structs, the matrix class and the geometry objects, the user must define free functions with specific signatures that performs the transformation between two connected systems in the hierarchy.
 
 # Simple example
 
 Two coordinate systems, A and B, with a parent-child relation, i.e. there exists a transformation that takes an entity defined in A to a representation in B and vice versa, are represented by the following construction in `TS`. 
 
 ```c++
-namespace Ts::System
+namespace ts
 {
   struct A : System<A, Root>
   {
@@ -39,18 +47,18 @@ namespace Ts::System
 }
 ```
 
-Here `System` and `Root` are structs in the TS library in the namespace `Ts::System`. The system in the top of the hierarchy must inherit from `Root` (in this case system A). Note that the construct uses CRTP (Curiously Re-occuring Template Pattern) so that every system is inheriting from `System` templated by the system itself.
+Here `System` and `Root` are structs in the TS library in the namespace `ts`. The system in the top of the hierarchy (in this case system A) must inherit from `Root` . Note that the construct uses CRTP (Curiously Re-occuring Template Pattern) so that every system is inheriting from `System` templated by the system itself.
 
 Further, to use TS the user must define a matrix class templated by the system a matrix transforms from to the system it transforms to e.g.
 
 ```c++
-template <typename From, typename To>
+template <typename T, typename From, typename To>
 class Matrix {
   ...
 }
 
 ```
-where `From` and `To` inherits from `Ts::System::System` like `A` and `B` in our example.
+where `From` and `To` inherits from `ts::System` like `A` and `B` in our example. `T` is the underlying data type (like `float`).
 Note tha the class does *not* need to be called `Matrix` but can have any name as long as the template signature is as described.
 
 The functions defining the transformations from `A` to `B`  and vice versa shall have the following signatures
@@ -58,18 +66,56 @@ The functions defining the transformations from `A` to `B`  and vice versa shall
 ```c++
 namespace Transform
 {
-  template<typename From>
-  Matrix<From, System::A> to_parent(const Matrix<From, System::B>& from);
+template <typename T, typename From>
+Matrix<T, From, A> toParent(const Matrix<T, From, B>& in, const G1& g1, const G2& g2, ...);
 
-  template<typename From>
-  void to_child(const Matrix<From, System::A>& from, Matrix<From, System::B>& to);
+template <typename T, typename From>
+void toChild(const Matrix<T, From, A>& from, Matrix<T, From, B>& to, const G1& g1, const G2& g2, ...);
 }
 ```
 With the above definitions the matrix connecting two arbitrary systems in an hierarchy can be obtained by
 
 ```c++
-Matrix<Ts::System::A, Ts::System::B> m = Ts::relate_systems<Ts::System::A, Ts::System::B, Matrix>();
+Matrix<float, ts::A, ts::B> m = ts::relate_systems<ts::A, ts::B, Matrix>(g1, g2, ...);
 ```
+*Note* that the arguments `g1, g2, ...` must match the signature of the `toParent` and `toChild` functions. 
+
+## Details
+
+### Inclusion of TS headers
+
+Source code using TS must include headers and function definitions in the following order
+```c++
+#include "ts/typesafe_system.h"
+
+namespace ts::transform {
+template <typename T, typename From>
+Matrix<T, From, A> toParent(const Matrix<T, From, B>& in, const G1& g1, const G2& g2, ...);
+
+template <typename T, typename From>
+void toChild(const Matrix<T, From, A>& from, Matrix<T, From, B>& to, const G1& g1, const G2& g2, ...);
+}
+
+#include "ts/typesafe_coordinate_systems.h"
+```
+
+This is normally achieved by puting the inclusion of `"ts/typesafe_system.h"` and the `toParent` and `toChild` functions is a separate header that in turn is included before `#include "ts/typesafe_coordinate_systems.h"`where needed.
+
+### Requirements on the Matrixs class
+
+If a matrix object is constructed through
+```c++
+Matrix<float, From, From> m;
+```
+i.e the connected systems are identical, the object must have the desired identity property.
+
+### Compilers
+
+Currently the tests of **TS** will not pass using MSVC with the c++17 compilation flag. It will however pass using the c++20 flag. **TS** is officially tested with GCC, MSVC for each push to the repo. It is unofficially tested with clang.  
+
+## Examples
+
+To see *TS*
 
 ## TS applied to general tree structures
 
