@@ -19,7 +19,7 @@ Multiple child systems is however allowed.
 The typesafe transformation matrix for a transformation between two systems is obtained through
 
 ```c++
-Matrix<float, ts::A, ts::C2> m = ts::relate_systems<ts::A, ts::C2, Matrix>(g1, g2....);
+Matrix<float, ts::A, ts::C2> m = ts::relateSystems<ts::A, ts::C2, Matrix>(g1, g2....);
 ```
 where 
 
@@ -76,7 +76,7 @@ void toChild(const Matrix<T, From, A>& from, Matrix<T, From, B>& to, const G1& g
 With the above definitions the matrix connecting two arbitrary systems in an hierarchy can be obtained by
 
 ```c++
-Matrix<float, ts::A, ts::B> m = ts::relate_systems<ts::A, ts::B, Matrix>(g1, g2, ...);
+Matrix<float, ts::A, ts::B> m = ts::relateSystems<ts::A, ts::B, Matrix>(g1, g2, ...);
 ```
 *Note* that the arguments `g1, g2, ...` must match the signature of the `toParent` and `toChild` functions. 
 
