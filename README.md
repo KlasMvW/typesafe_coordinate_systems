@@ -1,10 +1,10 @@
 [![CI - MSVC && GCC](https://github.com/KlasMvW/typesafe_coordinate_systems/actions/workflows/cmake.yml/badge.svg)](https://github.com/KlasMvW/typesafe_coordinate_systems/actions/workflows/cmake.yml)
 
-# Typesafe coordinate systems
+# Type-safe coordinate systems
 
 ## Brief description
 
-**TS** is header-only C++ library that allows the user to perform coordinate transformations in a typesafe manner.
+**TS** is header-only C++ library that allows the user to perform coordinate transformations in a type-safe manner.
 Each coordinate system is represented by a struct and the parent-child relation between the systems is represented by inheritance. The only restriction on the hierarchy of systems is that each system can have only one parent system.
 Multiple child systems is however allowed.
 
@@ -26,7 +26,7 @@ where
 
 * A and C2 are system structs.
 * Matrix is a user defined class that is templated with the systems that the matrix connects.
-* g1, g2... Are an arbitraty number of objects of user defined types that holds the current geometry state.
+* g1, g2... Are an arbitrary number of objects of user defined types that holds the current geometry state.
 
 Besides the system structs, the matrix class and the geometry objects, the user must define free functions with specific signatures that performs the transformation between two connected systems in the hierarchy.
 
@@ -99,9 +99,9 @@ void toChild(const Matrix<T, From, A>& from, Matrix<T, From, B>& to, const G1& g
 #include "ts/typesafe_coordinate_systems.h"
 ```
 
-This is normally achieved by puting the inclusion of `"ts/typesafe_system.h"` and the `toParent` and `toChild` functions is a separate header that in turn is included before `#include "ts/typesafe_coordinate_systems.h"`where needed.
+This is normally achieved by putting the inclusion of `"ts/typesafe_system.h"` and the `toParent` and `toChild` functions is a separate header that in turn is included before `#include "ts/typesafe_coordinate_systems.h"`where needed.
 
-### Requirements on the Matrixs class
+### Requirements on the Matrix class
 
 If a matrix object is constructed through
 ```c++
@@ -115,7 +115,7 @@ Currently the tests of **TS** will not pass using MSVC with the c++17 compilatio
 
 ## Examples
 
-To see *TS*
+To see how *TS* is used explicitly, see the files in the `test` directory.
 
 ## TS applied to general tree structures
 
