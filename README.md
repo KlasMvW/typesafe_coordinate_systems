@@ -34,14 +34,20 @@ In the example above only the transformations `A` to `B1` and `B1` to `C2` need 
 With TS is is possible to implement type safe matrix operations where
 
 ```c++
-auto m = Matrix<float, ts::A, ts::B1> * Matrix<float, ts::B1, ts::C2>
+Matrix<float, ts::A, ts::B1> a_to_b1;
+Matrix<float, ts::B1, ts::C2> b1_to_c2;
+auto m = b1_to_c2 * a_to_b1; 
 ``` 
 compiles
 
 but
 ```c++
-auto m = Matrix<float, ts::A, ts::B1> * Matrix<float, ts::B2, ts::C2>
+Matrix<float, ts::A, ts::B1> a_to_b1;
+Matrix<float, ts::B1, ts::C2> b1_to_c2;
+auto m = a_to_b1 * b1_to_c2;
 ``` 
+does not.
+
 
 # Simple example
 
