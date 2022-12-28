@@ -184,121 +184,121 @@ int main() {
 
 Test<"testFindFunction">([]<typename T>([[maybe_unused]]T& t) {
 
-  if constexpr (!find_function::toChild<A, B>) {
+  if constexpr (!find_function::to_child<A, B>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<A&, B>) {
+  if constexpr (!find_function::to_child<A&, B>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<const A&, B&, const C>) {
+  if constexpr (!find_function::to_child<const A&, B&, const C>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<const A&, const B>) {
+  if constexpr (!find_function::to_child<const A&, const B>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<A&, B, C&, const D>) {
+  if constexpr (!find_function::to_child<A&, B, C&, const D>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<A&, B, const C&, const D, E>) {
+  if constexpr (!find_function::to_child<A&, B, const C&, const D, E>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<A, B&>) {
+  if constexpr (!find_function::to_child<A, B&>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<A&, B&>) {
+  if constexpr (!find_function::to_child<A&, B&>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<const A&, B&>) {
+  if constexpr (!find_function::to_child<const A&, B&>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!find_function::toChild<A&, const B&>) {
+  if constexpr (!find_function::to_child<A&, const B&>) {
     t.assert_true(false, __LINE__);
   }
 
   //
 
-  if constexpr (find_function::toChild<A, C>) {
+  if constexpr (find_function::to_child<A, C>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::toChild<const A&, C>) {
+  if constexpr (find_function::to_child<const A&, C>) {
     t.assert_true(false, __LINE__);
   }
 
   ///
 
-  if constexpr (find_function::toChild<A, B, C>) { //?
+  if constexpr (find_function::to_child<A, B, C>) { //?
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::toChild<A, const B, C>) {
+  if constexpr (find_function::to_child<A, const B, C>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::toChild<A, B, C&>) { //?
+  if constexpr (find_function::to_child<A, B, C&>) { //?
    t.assert_true(false, __LINE__);
   }
 
   ///
 
-  if constexpr (find_function::toChild<A, B, C, D>) { //?
+  if constexpr (find_function::to_child<A, B, C, D>) { //?
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::toChild<A, B, C&, D>) { //?
+  if constexpr (find_function::to_child<A, B, C&, D>) { //?
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::toChild<const A, B, C&, const D>) {
+  if constexpr (find_function::to_child<const A, B, C&, const D>) {
     t.assert_true(false, __LINE__);
   }
 
   ///
 
-  if constexpr (find_function::toChild<A, B, C, D, E>) { //?
+  if constexpr (find_function::to_child<A, B, C, D, E>) { //?
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::toChild<A, B, D, E, C>) {
+  if constexpr (find_function::to_child<A, B, D, E, C>) {
     t.assert_true(false, __LINE__);
   }
 });
 
-Test<"testFindCommonAncestor">([]<typename T>([[maybe_unused]]T &t) {
-  if constexpr (!std::is_same_v<decltype(findCommonAncestor<B2, B3>()), A0>) {
+Test<"testfind_common_ancestor">([]<typename T>([[maybe_unused]]T &t) {
+  if constexpr (!std::is_same_v<decltype(find_common_ancestor<B2, B3>()), A0>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (std::is_same_v<decltype(findCommonAncestor<B2, B3>()), B1>) {
+  if constexpr (std::is_same_v<decltype(find_common_ancestor<B2, B3>()), B1>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!std::is_same_v<decltype(findCommonAncestor<A0, A0>()), A0>) {
+  if constexpr (!std::is_same_v<decltype(find_common_ancestor<A0, A0>()), A0>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!std::is_same_v<decltype(findCommonAncestor<B2, B3>()), A0>) {
+  if constexpr (!std::is_same_v<decltype(find_common_ancestor<B2, B3>()), A0>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!std::is_same_v<decltype(findCommonAncestor<A3, B3>()), C2>) {
+  if constexpr (!std::is_same_v<decltype(find_common_ancestor<A3, B3>()), C2>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!std::is_same_v<decltype(findCommonAncestor<A1, B3>()), A0>) {
+  if constexpr (!std::is_same_v<decltype(find_common_ancestor<A1, B3>()), A0>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (!std::is_same_v<decltype(findCommonAncestor<B2, B2>()), B2>) {
+  if constexpr (!std::is_same_v<decltype(find_common_ancestor<B2, B2>()), B2>) {
     t.assert_true(false, __LINE__);
   }
 });
@@ -386,9 +386,9 @@ Test<"testDown">([]<typename T>(T &t) {
   }
 });
 
-Test<"testRelateSystems">([]<typename T>(T &t) {
+Test<"testrelate_systems">([]<typename T>(T &t) {
   {
-    DummyMatrix<float, A2, B3> m = relateSystems<float, A2, B3, DummyMatrix>(A(), B());
+    DummyMatrix<float, A2, B3> m = relate_systems<float, A2, B3, DummyMatrix>(A(), B());
     std::vector<std::string> expectedTrace{"A2_to_A1", "A1_to_A0", "A0_to_B1", "B1_to_C2", "C2_to_B3"};
     t.template assert<std::equal_to<>>(m.trace.size(), expectedTrace.size(), __LINE__);
     for (int i = 0; i < (int)m.trace.size(); ++i) {
@@ -397,7 +397,7 @@ Test<"testRelateSystems">([]<typename T>(T &t) {
   }
 
   {
-    DummyMatrix<float, A2, A2> m = relateSystems<float, A2, A2, DummyMatrix>(A(), B());
+    DummyMatrix<float, A2, A2> m = relate_systems<float, A2, A2, DummyMatrix>(A(), B());
     std::vector<std::string> expectedTrace;
     t.template assert<std::equal_to<>>(m.trace.size(), expectedTrace.size(), __LINE__);
     for (int i = 0; i < (int)m.trace.size(); ++i) {
@@ -406,7 +406,7 @@ Test<"testRelateSystems">([]<typename T>(T &t) {
   }
 
   {
-    DummyMatrix<float, A0, B3> m = relateSystems<float, A0, B3, DummyMatrix>(A(), B());
+    DummyMatrix<float, A0, B3> m = relate_systems<float, A0, B3, DummyMatrix>(A(), B());
     std::vector<std::string> expectedTrace{"A0_to_B1", "B1_to_C2", "C2_to_B3"};
     t.template assert<std::equal_to<>>(m.trace.size(), expectedTrace.size(), __LINE__);
     for (int i = 0; i < (int)m.trace.size(); ++i) {
@@ -415,7 +415,7 @@ Test<"testRelateSystems">([]<typename T>(T &t) {
   }
 
   {
-    DummyMatrix<float, A2, A0> m = relateSystems<float, A2, A0, DummyMatrix>(A(), B());
+    DummyMatrix<float, A2, A0> m = relate_systems<float, A2, A0, DummyMatrix>(A(), B());
     std::vector<std::string> expectedTrace{"A2_to_A1", "A1_to_A0"};
     t.template assert<std::equal_to<>>(m.trace.size(), expectedTrace.size(), __LINE__);
     for (int i = 0; i < (int)m.trace.size(); ++i) {

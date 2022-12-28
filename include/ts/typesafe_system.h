@@ -1,11 +1,11 @@
 namespace ts
 {
   template<typename ThisSystem, typename ParentSystem>
-  struct System
+  struct TypesafeSystem
   {
     static constexpr int level = ParentSystem::level + 1;
-    using parent = ParentSystem;
-    using system = ThisSystem;
+    using Parent = ParentSystem;
+    using System = ThisSystem;
   };
 
   struct Root
