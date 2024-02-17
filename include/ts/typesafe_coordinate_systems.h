@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include <concepts>
 
 // This file implements type-safe coordinate transformations.
 //
@@ -91,34 +91,17 @@
 //    This is more complicated than finding all 'to_parent' functions as under 1. This is because
 //    the parent systems are not aware of their children.
 //    This a recursive procedure and the responsible function is 'down'.
-//    To detect existing to_child functions we use SFINAE (Substitution Failure Is Not An Error).
-//    The responsible functions are the overoaded find_function::to_child functions.
+//    To detect existing to_child functions we use 'concepts'
 
 namespace ts{
 namespace find_function {
 
-// Compile time check if a to_child function with specific arguments exists.
-namespace internal {
+template <typename... Args>
+concept to_child = requires(Args ... args)
+{
+    transform::to_child(args...);
+};
 
-// Define template variable to_child that defaults to false.
-template <typename, typename, typename = void, typename...>
-constexpr bool to_child = false;
-
-// Specialization of templateVariable to_child.
-// The template argument std::void_t<decltype(transform::to_child(std::declval<Arg1>(), std::declval<Arg2>(), std::declval<GeometryState>()...))>
-// has the 'type' ´void´ if the decltype expression is valid after substitution.
-template <typename Arg1, typename Arg2, typename... GeometryState>
-constexpr bool to_child<Arg1,
-                       Arg2,
-                       std::void_t<decltype(transform::to_child(std::declval<Arg1>(), std::declval<Arg2>(), std::declval<GeometryState>()...))>,
-                       GeometryState...> = true;
-} // namespace internal
-
-// Interface variable to internal::to_child.
-// template arguments, Arg1, Arg2, void, GeometryState..., will match the specialization above if the decltype expression can be evaluated and
-// find_function::to_child will evaluate to true. Else find_function::to_child will be false.
-template <typename Arg1, typename Arg2, typename... GeometryState>
-constexpr bool to_child = internal::to_child<Arg1, Arg2, void, GeometryState...>;
 } // namespace find_function
 
 // Compile time detection of the common ancestor type of S1 and S2.
