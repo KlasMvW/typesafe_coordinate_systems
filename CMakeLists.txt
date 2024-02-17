@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(TS VERSION 0.2.0 LANGUAGES CXX)
+project(TS VERSION 0.2.1 LANGUAGES CXX)
 
 enable_testing()
 
