@@ -1,6 +1,5 @@
 #pragma once
 
-#include <type_traits>
 #include <concepts>
 
 // This file implements type-safe coordinate transformations.
