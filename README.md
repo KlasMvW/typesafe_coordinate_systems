@@ -148,7 +148,7 @@ i.e the connected systems are identical, the object must have the desired identi
 
 ### Compilers
 
-Currently the tests of **TS** will not pass using MSVC with the C++17 compilation flag. It will however pass using the C++20 flag. **TS** is officially tested with GCC, MSVC for each push to the repo. It is unofficially tested with clang.  
+Currently the tests of **TS** will not pass using MSVC with the C++17 compilation flag. It will however pass using the C++20 flag. **TS** is officially tested with GCC, Clang, and MSVC for each push to the repo.  
 
 ## Examples
 
