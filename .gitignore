@@ -1,2 +1,14 @@
-build-Release
- 
+build*/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CMake artifacts
+CMakeCache.txt
+CMakeFiles/
+TSConfigVersion.cmake

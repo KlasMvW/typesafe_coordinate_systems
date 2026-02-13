@@ -5,6 +5,9 @@ target_include_directories(TS_test PRIVATE include/)
 target_sources(TS_test PRIVATE include/ts_test.h
                                src/ts_test.cxx)
 
-target_compile_options(TS_test PRIVATE $<$<CXX_COMPILER_ID:MSVC>: $<$<CONFIG:Release>:/O2> /W4>)
+target_compile_options(TS_test PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>: $<$<CONFIG:Release>:/O2> /W4>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>: -Wall -Wextra>
+)
 
 add_test(tu_test TS_test)

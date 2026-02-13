@@ -1,3 +1,5 @@
+#pragma once
+
 namespace ts
 {
   template<typename ThisSystem, typename ParentSystem>

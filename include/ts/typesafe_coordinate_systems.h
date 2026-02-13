@@ -60,8 +60,8 @@
 //
 // Explanation of the algorithm
 //
-// The algorithm deduces the sequence of function calls required to obatin ant transformation matrix between two systems at compile time.
-// The computation of the matrix is done run time since the actual coputation depends on runtime data.
+// The algorithm deduces the sequence of function calls required to obtain any transformation matrix between two systems at compile time.
+// The computation of the matrix is done run time since the actual computation depends on runtime data.
 //
 // Given a hierarchy like
 /*
@@ -105,8 +105,8 @@ concept to_child = requires(Args ... args)
 } // namespace find_function
 
 // Compile time detection of the common ancestor type of S1 and S2.
-// Note that trying to two find the commin ancestor of disconnected trees will result in compilation failure although the trees share the same
-// root node of type Root (se the difinition of class TypesafeSystem and class Root).
+// Note that trying to two find the common ancestor of disconnected trees will result in compilation failure although the trees share the same
+// root node of type Root (se the definition of class TypesafeSystem and class Root).
 // This is because Root is not a TypesafeSystem and the function below requires the returned type to be a TypesafeSystem.
 template <typename S1, typename S2>
 constexpr auto find_common_ancestor() {
@@ -115,7 +115,7 @@ constexpr auto find_common_ancestor() {
   } else if constexpr (S1::level < S2::level) {
     return find_common_ancestor<S1, typename S2::Parent>();
   } else {
-    if constexpr (std::is_same<S1, S2>::value) {
+    if constexpr (std::is_same_v<S1, S2>) {
       // The returned type is a TypesafeSystem.
       // The line below will render a compilation error if we try to find the common ancestor of nodes in different trees.
       return typename S1::System{};
@@ -136,7 +136,7 @@ template <typename T,
           typename M,
           typename... GeometryState>
 M<T, From, To> up(const M<T, From, Intermediate>& rhs, [[maybe_unused]]const GeometryState&... geometryState) {
-  if constexpr (std::is_same<To, Intermediate>::value) {
+  if constexpr (std::is_same_v<To, Intermediate>) {
     return rhs;
   } else {
     const auto v1 = transform::to_parent(rhs, geometryState...);
@@ -155,7 +155,7 @@ template <typename T,
           typename M,
           typename... GeometryState>
 M<T, From, To> down(const M<T, From, Intermediate>& rhs, [[maybe_unused]]const GeometryState&... geometryState) {
-  if constexpr (std::is_same<To, Intermediate>::value) {
+  if constexpr (std::is_same_v<To, Intermediate>) {
     return rhs;
   } else if constexpr (find_function::to_child<const M<T, From, Intermediate>&, M<T, From, To>&, const GeometryState&...>) {
     M<T, From, To> v1;

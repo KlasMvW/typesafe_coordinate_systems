@@ -22,7 +22,7 @@ struct A2 : TypesafeSystem<A2, A1> {};
 struct B2 : TypesafeSystem<B2, A1> {};
 struct C2 : TypesafeSystem<C2, B1> {};
 struct A3 : TypesafeSystem<A3, C2> {};
-struct B3 : TypesafeSystem<A3, C2> {};
+struct B3 : TypesafeSystem<B3, C2> {};
 
 struct D0 : TypesafeSystem<D0, Root> {};
 
