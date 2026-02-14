@@ -1,6 +1,7 @@
 #include "ts_test.h"
 #include "ts/typesafe_coordinate_systems.h"
 
+#include <bit>
 #include <string>
 #include <vector>
 #include <iomanip>
@@ -8,6 +9,8 @@
 #include <algorithm>
 #include <typeinfo>
 #include <iostream>
+#include <cmath>
+#include <cstdint>
 
 #define ESC "\033["
 #define LIGHT_BLUE "\033[106m"
@@ -20,38 +23,18 @@ using namespace ts;
 
 template<typename T>
 struct near {
+  static_assert(std::is_same_v<T, float>, "near<T> only supports float");
+
   constexpr bool operator()(T l, T r) const {
-  // Code from https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon
-  // The machine epsilon has to be scaled to the magnitude of the values used
-  // and multiplied by the desired precision in ULPs (units in the last place)
-  // unless the result is subnormal.
-  //int ulp;
-  //if (std::is_same_v<TU_TYPE, float>) {
-  //  ulp = 10;
-  //} else {
-  //  ulp = 100000000;
-  //}
-  //return (std::abs(l - r) <= std::numeric_limits<T>::epsilon() * std::abs(l + r) * ulp
-  //        || std::abs(l - r) < std::numeric_limits<T>::min());
-
-    // Make sure maxUlps is non-negative and small enough that the    
-    // default NAN won't compare as equal to anything.
-    const int  maxUlps{4};    
-    //assert(maxUlps > 0 && maxUlps < 4 * 1024 * 1024);    
-    int aInt = *(int*)&l;    
-    // Make aInt lexicographically ordered as a twos-complement int    
-    if (aInt < 0)    
-        aInt = 0x80000000 - aInt;    
-    // Make bInt lexicographically ordered as a twos-complement int    
-    int bInt = *(int*)&r;    
-    if (bInt < 0)    
-        bInt = 0x80000000 - bInt;    
-    int intDiff = abs(aInt - bInt);    
-    if (intDiff <= maxUlps)    
-        return true;    
-    return false;    
+    const int32_t maxUlps{4};
+    auto aInt = std::bit_cast<int32_t>(l);
+    if (aInt < 0)
+      aInt = INT32_MIN - aInt;
+    auto bInt = std::bit_cast<int32_t>(r);
+    if (bInt < 0)
+      bInt = INT32_MIN - bInt;
+    return std::abs(aInt - bInt) <= maxUlps;
   }
-
 };
 
 template<size_t N>
@@ -131,25 +114,24 @@ struct Test {
     std::cout << RESET << std::endl;
   }
 
-void assert_true(bool is_true, int line) {
-  if (!is_true) {
-    state = Failure();
-    log.push_back({"FAIL: assert_true", "Line " + std::to_string(line), ""});
+  void assert_true(bool is_true, int line) {
+    if (!is_true) {
+      state = Failure();
+      log.push_back({"FAIL: assert_true", "Line " + std::to_string(line), ""});
+    }
   }
-}
 
-void assert_false(bool is_true, int line) {
-  if (is_true) {
-    state = Failure();
-    log.push_back({"FAIL: assert_false", "Line " + std::to_string(line), ""});
+  void assert_false(bool is_true, int line) {
+    if (is_true) {
+      state = Failure();
+      log.push_back({"FAIL: assert_false", "Line " + std::to_string(line), ""});
+    }
   }
-}
 
-template<typename Op, typename T>
-void assert(const T& l, const T& r, int line) {
+  template<typename Op, typename T>
+  void assert(const T& l, const T& r, int line) {
     Op op;
-
- if (!op(l, r)) {
+    if (!op(l, r)) {
       state = Failure();
       if constexpr (std::is_same_v<Op, std::equal_to<>>) {
         log.push_back({"FAIL: assert_equal", "Line " + std::to_string(line), to_str(l) + " != " + to_str(r)});
@@ -159,24 +141,23 @@ void assert(const T& l, const T& r, int line) {
       } else {
         log.push_back({"FAIL: assert", "Line " + std::to_string(line)});
       }
+    }
   }
-}
 
-template<typename Type, typename First, typename ...Among>
-constexpr void assert_type_among(int line, std::string types= "") {
-  types += std::string(typeid(First).name()) + ", ";
-  if constexpr (std::is_same_v<Type, First>){
-    return;
-  } else
-  if constexpr (sizeof...(Among) == 0) {
-    state = Failure();
-    log.push_back({"FAIL: assert type among", "Line " + std::to_string(line), std::string(typeid(Type).name()) + " not among " + "{" + types + "}"});
-    types="";
-    return;
-  } else {
-    assert_type_among<Type, Among...>(line, types);
+  template<typename Type, typename First, typename ...Among>
+  void assert_type_among(int line, std::string types= "") {
+    types += std::string(typeid(First).name()) + ", ";
+    if constexpr (std::is_same_v<Type, First>){
+      return;
+    } else
+    if constexpr (sizeof...(Among) == 0) {
+      state = Failure();
+      log.push_back({"FAIL: assert type among", "Line " + std::to_string(line), std::string(typeid(Type).name()) + " not among " + "{" + types + "}"});
+      return;
+    } else {
+      assert_type_among<Type, Among...>(line, types);
+    }
   }
-}
 };
 
 
