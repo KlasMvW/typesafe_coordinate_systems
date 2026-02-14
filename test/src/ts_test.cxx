@@ -1,165 +1,8 @@
 #include "ts_test.h"
+#include "test_framework.h"
 #include "ts/typesafe_coordinate_systems.h"
 
-#include <bit>
-#include <string>
-#include <vector>
-#include <iomanip>
-#include <variant>
-#include <algorithm>
-#include <typeinfo>
-#include <iostream>
-#include <cmath>
-#include <cstdint>
-
-#define ESC "\033["
-#define LIGHT_BLUE "\033[106m"
-#define PURPLE "\033[35m"
-#define FAIL "\033[31m"
-#define SUCCESS "\033[32m"
-#define RESET "\033[m"
-
 using namespace ts;
-
-template<typename T>
-struct near {
-  static_assert(std::is_same_v<T, float>, "near<T> only supports float");
-
-  constexpr bool operator()(T l, T r) const {
-    const int32_t maxUlps{4};
-    auto aInt = std::bit_cast<int32_t>(l);
-    if (aInt < 0)
-      aInt = INT32_MIN - aInt;
-    auto bInt = std::bit_cast<int32_t>(r);
-    if (bInt < 0)
-      bInt = INT32_MIN - bInt;
-    return std::abs(aInt - bInt) <= maxUlps;
-  }
-};
-
-template<size_t N>
-struct String_literal {
-  constexpr String_literal(const char (&str)[N]) {
-      std::copy_n(str, N, name);
-  }
-  char name[N];
-};
-
-struct Success {};
-struct Failure {};
-
-struct Test_stats {
-  static inline int fail{0};
-  static inline int success{0};
-
-  ~Test_stats() {
-    std::cout << SUCCESS << "SUCCESS: " << success << RESET << std::endl;
-    if (fail) {
-      std::cout << FAIL    << "FAIL   : " << fail << RESET << std::endl;
-    }
-  }
-} stats;
-
-template<String_literal lit>
-struct Test {
-
-  struct Layout {
-    int column_width{40};
-  } layout;
-
-  std::variant<Success, Failure> state;
-  std::vector<std::vector<std::string>> log;
-
-  template<typename F>
-  Test(const F f) {
-    try {
-      f(*this);
-    } catch(...) {
-      std::cout << "Unexpected exception" << std::endl;
-      throw;
-    }
-    Log();
-  }
-
-  template<typename T>
-  std::string to_str(const T& t) {
-    if constexpr (std::is_arithmetic_v<T>) {
-      return std::to_string(t);
-    }
-    else if constexpr (std::is_same_v<std::string, T>) {
-      return t;
-    } else {
-      return std::string("<not string convertible>");
-    }
-  } 
-
-  void Log(){
-    auto style = SUCCESS;
-    if (std::holds_alternative<Success>(state)) {
-       log.push_back({"SUCCESS"});
-       Test_stats::success++;
-    } else {
-      style = FAIL;
-      Test_stats::fail++;
-    }
-    std::cout << style << std::left << std::setw(layout.column_width) << lit.name;
-    for (const auto &row : log) {
-      std::cout << style;
-      for(const auto &column: row){
-        std::cout << std::left << std::setw(layout.column_width) << column;
-      }
-        std::cout << RESET;
-        std::cout << std::endl << std::setfill(' ') << std::setw(layout.column_width) << " ";
-    }
-    std::cout << RESET << std::endl;
-  }
-
-  void assert_true(bool is_true, int line) {
-    if (!is_true) {
-      state = Failure();
-      log.push_back({"FAIL: assert_true", "Line " + std::to_string(line), ""});
-    }
-  }
-
-  void assert_false(bool is_true, int line) {
-    if (is_true) {
-      state = Failure();
-      log.push_back({"FAIL: assert_false", "Line " + std::to_string(line), ""});
-    }
-  }
-
-  template<typename Op, typename T>
-  void assert(const T& l, const T& r, int line) {
-    Op op;
-    if (!op(l, r)) {
-      state = Failure();
-      if constexpr (std::is_same_v<Op, std::equal_to<>>) {
-        log.push_back({"FAIL: assert_equal", "Line " + std::to_string(line), to_str(l) + " != " + to_str(r)});
-      } else
-      if constexpr (std::is_same_v<Op, near<T>>) {
-        log.push_back({"FAIL: assert_near", "Line " + std::to_string(line), to_str(l) + " not near " + to_str(r)});
-      } else {
-        log.push_back({"FAIL: assert", "Line " + std::to_string(line)});
-      }
-    }
-  }
-
-  template<typename Type, typename First, typename ...Among>
-  void assert_type_among(int line, std::string types= "") {
-    types += std::string(typeid(First).name()) + ", ";
-    if constexpr (std::is_same_v<Type, First>){
-      return;
-    } else
-    if constexpr (sizeof...(Among) == 0) {
-      state = Failure();
-      log.push_back({"FAIL: assert type among", "Line " + std::to_string(line), std::string(typeid(Type).name()) + " not among " + "{" + types + "}"});
-      return;
-    } else {
-      assert_type_among<Type, Among...>(line, types);
-    }
-  }
-};
-
 
 int main() {
 
@@ -217,7 +60,8 @@ Test<"testFindFunction">([]<typename T>([[maybe_unused]]T& t) {
 
   ///
 
-  if constexpr (find_function::to_child<A, B, C>) { //?
+  // These ARE callable: non-const lvalue args bind to non-const ref params
+  if constexpr (!find_function::to_child<A, B, C>) {
     t.assert_true(false, __LINE__);
   }
 
@@ -225,17 +69,17 @@ Test<"testFindFunction">([]<typename T>([[maybe_unused]]T& t) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::to_child<A, B, C&>) { //?
-   t.assert_true(false, __LINE__);
+  if constexpr (!find_function::to_child<A, B, C&>) {
+    t.assert_true(false, __LINE__);
   }
 
   ///
 
-  if constexpr (find_function::to_child<A, B, C, D>) { //?
+  if constexpr (!find_function::to_child<A, B, C, D>) {
     t.assert_true(false, __LINE__);
   }
 
-  if constexpr (find_function::to_child<A, B, C&, D>) { //?
+  if constexpr (!find_function::to_child<A, B, C&, D>) {
     t.assert_true(false, __LINE__);
   }
 
@@ -245,11 +89,57 @@ Test<"testFindFunction">([]<typename T>([[maybe_unused]]T& t) {
 
   ///
 
-  if constexpr (find_function::to_child<A, B, C, D, E>) { //?
+  if constexpr (!find_function::to_child<A, B, C, D, E>) {
     t.assert_true(false, __LINE__);
   }
 
   if constexpr (find_function::to_child<A, B, D, E, C>) {
+    t.assert_true(false, __LINE__);
+  }
+});
+
+// Test concept detection with DummyMatrix types — mirrors actual usage in down()
+// Defined to_child pairs: A0->B1, B1->C2, C2->B3, C2->A3
+Test<"testFindFunctionTemplate">([]<typename T>([[maybe_unused]]T& t) {
+  using M = DummyMatrix<float, A0, A0>; // arbitrary From for type deduction
+
+  // Existing direct parent-child pairs should be found
+  if constexpr (!find_function::to_child<const DummyMatrix<float, A0, A0>&, DummyMatrix<float, A0, B1>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  if constexpr (!find_function::to_child<const DummyMatrix<float, A0, B1>&, DummyMatrix<float, A0, C2>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  if constexpr (!find_function::to_child<const DummyMatrix<float, A0, C2>&, DummyMatrix<float, A0, B3>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  if constexpr (!find_function::to_child<const DummyMatrix<float, A0, C2>&, DummyMatrix<float, A0, A3>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+
+  // Non-existent direct pairs should NOT be found
+  // Skipping a level: A0 -> C2 (must go A0->B1->C2)
+  if constexpr (find_function::to_child<const DummyMatrix<float, A0, A0>&, DummyMatrix<float, A0, C2>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  // Skipping two levels: A0 -> B3
+  if constexpr (find_function::to_child<const DummyMatrix<float, A0, A0>&, DummyMatrix<float, A0, B3>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  // Wrong direction: B1 -> A0 (to_parent exists, but not to_child)
+  if constexpr (find_function::to_child<const DummyMatrix<float, A0, B1>&, DummyMatrix<float, A0, A0>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  // Sibling: B3 -> A3 (both children of C2, but no direct to_child between them)
+  if constexpr (find_function::to_child<const DummyMatrix<float, A0, B3>&, DummyMatrix<float, A0, A3>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  // No to_child defined from A1 at all
+  if constexpr (find_function::to_child<const DummyMatrix<float, A0, A1>&, DummyMatrix<float, A0, A2>&, const A&, const B&>) {
+    t.assert_true(false, __LINE__);
+  }
+  // Wrong geometry types
+  if constexpr (find_function::to_child<const DummyMatrix<float, A0, A0>&, DummyMatrix<float, A0, B1>&, const B&, const A&>) {
     t.assert_true(false, __LINE__);
   }
 });
