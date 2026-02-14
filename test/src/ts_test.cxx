@@ -404,4 +404,50 @@ Test<"testrelate_systems">([]<typename T>(T &t) {
     }
   }
 });
+
+Test<"testFindCommonAncestorEdgeCases">([](auto& t) {
+  // Leaf to root
+  t.assert_true((std::is_same_v<decltype(find_common_ancestor<A2, A0>()), A0>), __LINE__);
+
+  // Root to leaf (reversed -- verify symmetry)
+  t.assert_true((std::is_same_v<decltype(find_common_ancestor<A0, A2>()), A0>), __LINE__);
+
+  // Same-level nodes on different branches with different parents: B2 and C2
+  t.assert_true((std::is_same_v<decltype(find_common_ancestor<B2, C2>()), A0>), __LINE__);
+
+  // Direct parent-child pair: A1 and A2
+  t.assert_true((std::is_same_v<decltype(find_common_ancestor<A1, A2>()), A1>), __LINE__);
+
+  // Symmetry: order shouldn't matter
+  t.assert_true((std::is_same_v<decltype(find_common_ancestor<B3, A1>()), A0>), __LINE__);
+  t.assert_true((std::is_same_v<decltype(find_common_ancestor<A1, B3>()), A0>), __LINE__);
+});
+
+Test<"testRelateSystemsEdgeCases">([](auto& t) {
+  // Down-only to a different leaf than existing test (A0 -> A3 instead of A0 -> B3)
+  {
+    DummyMatrix<float, A0, A3> m = relate_systems<float, A0, A3, DummyMatrix>(A(), B());
+    std::vector<std::string> expectedTrace{"A0_to_B1", "B1_to_C2", "C2_to_A3"};
+    t.template assert<std::equal_to<>>(m.trace.size(), expectedTrace.size(), __LINE__);
+    for (int i = 0; i < (int)m.trace.size(); ++i) {
+      t.template assert<std::equal_to<>>(m.trace[i], expectedTrace[i], __LINE__);
+    }
+  }
+
+  // Up-only single step (A2 -> A1)
+  {
+    DummyMatrix<float, A2, A1> m = relate_systems<float, A2, A1, DummyMatrix>(A(), B());
+    std::vector<std::string> expectedTrace{"A2_to_A1"};
+    t.template assert<std::equal_to<>>(m.trace.size(), expectedTrace.size(), __LINE__);
+    for (int i = 0; i < (int)m.trace.size(); ++i) {
+      t.template assert<std::equal_to<>>(m.trace[i], expectedTrace[i], __LINE__);
+    }
+  }
+
+  // Root identity: A0 -> A0
+  {
+    DummyMatrix<float, A0, A0> m = relate_systems<float, A0, A0, DummyMatrix>(A(), B());
+    t.template assert<std::equal_to<>>(m.trace.size(), (size_t)0, __LINE__);
+  }
+});
 }
